@@ -7,9 +7,9 @@ export default function CardPokemons({ data }) {
 
   return (
     <>
-      <section className="card py-5 border-0">
+      <div className="card border-0 mt-0">
         {/* <p>holla</p> */}
-        <div className="container px-4 px-lg-5 mt-5">
+        <div className="container px-4 px-lg-5 ">
           <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             {data.map((e, i) => (
               <div className="col mb-5 p-2">
@@ -55,7 +55,7 @@ export default function CardPokemons({ data }) {
             ))}
           </div>
         </div>
-      </section>
+      </div>
     </>
   );
 }
