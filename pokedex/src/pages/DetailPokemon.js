@@ -1,4 +1,4 @@
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate, json } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDetail, fetchPoke } from "../store/actions";
@@ -68,6 +68,9 @@ export default function DetailPokemon() {
       navigate(`/${id}`)
     }
   }
+
+  // console.log(props.id);
+  // console.log(location.pathname);
 
   if (dataDetailPoke.length === 0) return <h1>Loading...</h1>;
   if (!props) return <h1>Loading...</h1>;
@@ -162,27 +165,76 @@ export default function DetailPokemon() {
                     >
                       Stats
                     </div>
+                    <div
+                      className="col-3 py-2 mx-2 bg-white fw-bolder border"
+                      style={{ fontSize: 18, borderRadius: 24 }}
+                      onClick={() => moveQuery(props.id, "moves")}
+                    >
+                      Moves
+                    </div>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="col-9 d-flex justify-content-center text-center">
-                    <div
-                      className="col-3 py-2 mx-2 bg-white text-dark fw-bolder border"
-                      style={{ fontSize: 18, borderRadius: 24 }}
-                      onClick={() => moveQuery(props.id)}
-                    >
+                  {location.pathname == `/${props.id}/stats` ? (
+                    <>
                       {" "}
-                      About
-                    </div>
-                    <div
-                      className="col-3 py-2 mx-2 bg-secondary text-white fw-bolder"
-                      style={{ fontSize: 18, borderRadius: 24 }}
-                      onClick={() => moveQuery(props.id, "stats")}
-                    >
-                      Stats
-                    </div>
-                  </div>
+                      <div className="col-9 d-flex justify-content-center text-center">
+                        <div
+                          className="col-3 py-2 mx-2 bg-white text-dark fw-bolder border"
+                          style={{ fontSize: 18, borderRadius: 24 }}
+                          onClick={() => moveQuery(props.id)}
+                        >
+                          {" "}
+                          About
+                        </div>
+                        <div
+                          className="col-3 py-2 mx-2 bg-secondary text-white fw-bolder"
+                          style={{ fontSize: 18, borderRadius: 24 }}
+                          onClick={() => moveQuery(props.id, "stats")}
+                        >
+                          Stats
+                        </div>
+                        <div
+                          className="col-3 py-2 mx-2 bg-white text-dark fw-bolder border"
+                          style={{ fontSize: 18, borderRadius: 24 }}
+                          onClick={() => moveQuery(props.id, "moves")}
+                        >
+                          {" "}
+                          Moves
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <div className="col-9 d-flex justify-content-center text-center">
+                        <div
+                          className="col-3 py-2 mx-2 bg-white text-dark fw-bolder border"
+                          style={{ fontSize: 18, borderRadius: 24 }}
+                          onClick={() => moveQuery(props.id)}
+                        >
+                          {" "}
+                          About
+                        </div>
+                        <div
+                          className="col-3 py-2 mx-2 bg-white text-dark border fw-bolder"
+                          style={{ fontSize: 18, borderRadius: 24 }}
+                          onClick={() => moveQuery(props.id, "stats")}
+                        >
+                          Stats
+                        </div>
+                        <div
+                          className="col-3 py-2 mx-2 bg-secondary text-white fw-bolder border"
+                          style={{ fontSize: 18, borderRadius: 24 }}
+                          onClick={() => moveQuery(props.id, "moves")}
+                        >
+                          {" "}
+                          Moves
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -195,79 +247,110 @@ export default function DetailPokemon() {
                       <p>Height</p>
                       <p>Weight</p>
                       <p>Abilities</p>
-                      <p>Moves</p>
+                     
                     </div>
                     <div className="col-8 fw-bolder">
                       <p>{dataDetailPoke[0].species}</p>
                       <p>{dataDetailPoke[0].height * 10} cm</p>
-                      <p>{dataDetailPoke[0].weight * 0.1} kg</p>
+                      <p>{Math.floor(dataDetailPoke[0].weight * 0.1)} kg</p>
                       <p>{dataDetailPoke[0].abilities.join(", ")}</p>
-                      <p>{dataDetailPoke[2]}</p>
+                    
                     </div>
                   </div>
                 </div>
               </>
             ) : (
               <>
-                {" "}
-                <div className="row d-flex justify-content-center m-5">
-                  <div className="col-9 border p-5 d-flex">
-                    <div className="col-3">
-                      <p>HP</p>
-                      <p>Attack</p>
-                      <p>Defense</p>
-                      <p>Sp. Atk</p>
-                      <p>Sp. Def</p>
-                      <p>Speed</p>
+                {location.pathname == `/${props.id}/stats` ? (
+                  <>
+                    {" "}
+                    <div className="row d-flex justify-content-center m-5">
+                      <div className="col-9 border p-5 d-flex rounded">
+                        <div className="col-3">
+                          <p>HP</p>
+                          <p>Attack</p>
+                          <p>Defense</p>
+                          <p>Sp. Atk</p>
+                          <p>Sp. Def</p>
+                          <p>Speed</p>
+                        </div>
+                        <div className="col-2 fw-bolder">
+                          <p>{stat.hp}</p>
+                          <p>{stat.atk}</p>
+                          <p>{stat.def}</p>
+                          <p>{stat.spatk}</p>
+                          <p>{stat.spdef}</p>
+                          <p>{stat.speed}</p>
+                        </div>
+                        <div className="col-7">
+                          <div className="progressBar p-1 ">
+                            <ProgressBar
+                              now={stat.hp}
+                              label={`${stat.hp} point / 100`}
+                              variant="success"
+                              striped
+                             
+                            />
+                          </div>
+                          <div className="progressBar mt-3 p-1">
+                            <ProgressBar
+                              now={stat.atk}
+                              label={`${stat.atk} point / 100`}
+                              variant="danger"
+                              striped
+                            />
+                          </div>
+                          <div className="progressBar mt-3 ">
+                            <ProgressBar
+                              now={stat.def}
+                              label={`${stat.def} point / 100`}
+                              variant="info"
+                              striped
+                            />
+                          </div>
+                          <div className="progressBar mt-4 p-1">
+                            <ProgressBar
+                              now={stat.spatk}
+                              label={`${stat.spatk} point / 100`}
+                              variant="secondary"
+                              striped
+                            />
+                          </div>
+                          <div className="progressBar mt-3 p-1">
+                            <ProgressBar
+                              now={stat.spdef}
+                              label={`${stat.spdef} point / 100`}
+                              variant="warning"
+                              striped
+                            />
+                          </div>
+                          <div className="progressBar mt-3 p-1">
+                            <ProgressBar
+                              now={stat.speed}
+                              label={`${stat.speed} point / 100`}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="col-2 fw-bolder">
-                      <p>{stat.hp}</p>
-                      <p>{stat.atk}</p>
-                      <p>{stat.def}</p>
-                      <p>{stat.spatk}</p>
-                      <p>{stat.spdef}</p>
-                      <p>{stat.speed}</p>
-                    </div>
-                    <div className="col-7">
-                      <div className="progressBar p-1">
-                        <ProgressBar
-                          now={stat.hp}
-                          label={`${stat.hp} point / 100`}
-                        />
-                      </div>
-                      <div className="progressBar mt-3 p-1">
-                        <ProgressBar
-                          now={stat.atk}
-                          label={`${stat.atk} point / 100`}
-                        />
-                      </div>
-                      <div className="progressBar mt-3 ">
-                        <ProgressBar
-                          now={stat.def}
-                          label={`${stat.def} point / 100`}
-                        />
-                      </div>
-                      <div className="progressBar mt-4 p-1">
-                        <ProgressBar
-                          now={stat.spatk}
-                          label={`${stat.spatk} point / 100`}
-                        />
-                      </div>
-                      <div className="progressBar mt-3 p-1">
-                        <ProgressBar
-                          now={stat.spdef}
-                          label={`${stat.spdef} point / 100`}
-                        />
-                      </div>
-                      <div className="progressBar mt-3 p-1">
-                        <ProgressBar
-                          now={stat.speed}
-                          label={`${stat.speed} point / 100`}
-                        />
+                  </>
+                ) : (
+                  <>
+                    {" "}
+                    <div className="row d-flex justify-content-center m-5 rounded">
+                      <div className="col-9 border p-5 d-flex justify-content-center rounded">
+                        <div className="col-4">
+                          <p>Moves</p>
+                        </div>
+                        <div className="col-4">
+                          {dataDetailPoke[2].map((e, i) => {
+                            return <p className="fw-bolder">{i+1}. {e}</p>;
+                          })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </>
             )}
             <div

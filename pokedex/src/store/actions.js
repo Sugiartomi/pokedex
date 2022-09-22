@@ -66,7 +66,7 @@ export const fetchDetail = (id) => {
          abilities: data.abilities.map((e) => e.ability.name),
        };
        const baseStats = data.stats;
-       const moves = data.moves[0].move.name;
+       const moves = data.moves.map( e=> e.move.name);
        const zip = [about, baseStats, moves]
         dispatch({
           type: "byid/success",
